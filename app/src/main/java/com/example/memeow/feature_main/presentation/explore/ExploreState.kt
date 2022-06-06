@@ -1,5 +1,6 @@
 package com.example.memeow.feature_main.presentation.explore
 
+import androidx.compose.ui.input.key.Key.Companion.F
 import com.example.memeow.feature_main.domain.model.Meme
 
 /*
@@ -9,5 +10,6 @@ import com.example.memeow.feature_main.domain.model.Meme
  */
 data class ExploreState (
     val memes: List<Meme> = emptyList(),
-    val keyword: String = ""
+    val keyword: String = "",
+    val searchbaractivate: Boolean = false
 )

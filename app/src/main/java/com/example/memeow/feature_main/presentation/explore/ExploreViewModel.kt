@@ -66,4 +66,16 @@ class ExploreViewModel @Inject constructor(
      Why we don't call collect() on flow? see:
      https://handstandsam.com/2021/02/19/the-best-way-to-collect-a-flow-in-kotlin-launchin/
     */
+
+    fun updatetext(newkeyword: String){
+        _state.value = state.value.copy(
+            keyword = newkeyword
+        )
+    }
+
+    fun updatebar(newsearchbaractivate: Boolean){
+        _state.value = state.value.copy(
+            searchbaractivate = newsearchbaractivate
+        )
+    }
 }
