@@ -29,7 +29,8 @@ fun MemeItem(
             painter = painterResource(drawable),
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(56.dp)
+            modifier = Modifier
+                .size(168.dp)//the image size display in lazy grid
         )
     }
 }

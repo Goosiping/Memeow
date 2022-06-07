@@ -13,12 +13,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+
 // reference: https://www.youtube.com/watch?v=3oXBnM6fZj0
+@Composable
+fun MainBar(
+    displaysearchbar: Boolean,
+    keyword: String,
+    onTextChange: (String) -> Unit,
+    onCloseClicked: () -> Unit,
+    onSearchClicked: (String) -> Unit,
+    onSearchTrigger: () -> Unit
+){
+    when(displaysearchbar){
+        false -> {
+            DefaultAppBar(onSearchClicked = onSearchTrigger)
+        }
+        true-> {
+            SearchBar(
+                text = keyword,
+                onTextChange = onTextChange,
+                onCloseClicked = onCloseClicked,
+                onSearchClicked = onSearchClicked
+            )
+        }
+    }
+}
+
 @Composable
 fun SearchBar(
     text: String,
@@ -50,7 +76,7 @@ fun SearchBar(
             leadingIcon = {
                 IconButton(
                     modifier = Modifier.alpha(ContentAlpha.medium),
-                    onClick = { /*TODO*/ }
+                    onClick = {}
                 ) {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -62,9 +88,9 @@ fun SearchBar(
                 IconButton(
                     onClick = {
                         if (text.isEmpty()){
-                            onTextChange("")
-                        }else{
                             onCloseClicked()
+                        }else{
+                            onTextChange("")
                         }
                     }
                 ) {
@@ -81,9 +107,35 @@ fun SearchBar(
                 onSearch = {
                     onSearchClicked(text)
                 }
+            ),
+            colors = TextFieldDefaults.textFieldColors(
+                backgroundColor = Color.Transparent,
+                cursorColor = Color.White.copy(alpha = ContentAlpha.medium)
             )
         )
     }
+}
+
+@Composable
+fun DefaultAppBar(onSearchClicked: () -> Unit) {
+    TopAppBar(
+        title = {
+            Text(
+                text = "Memeow"
+            )
+        },
+        actions = {
+            IconButton(
+                onClick = { onSearchClicked() }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Search,
+                    contentDescription = "Search Icon",
+                    tint = Color.White
+                )
+            }
+        }
+    )
 }
 
 @Composable
@@ -93,6 +145,14 @@ fun SearchBarPreview() {
         text = "TEXT!",
         onTextChange = { },
         onCloseClicked = { },
+        onSearchClicked = { }
+    )
+}
+
+@Composable
+@Preview
+fun DefaultAppBarPreview() {
+    DefaultAppBar(
         onSearchClicked = { }
     )
 }
