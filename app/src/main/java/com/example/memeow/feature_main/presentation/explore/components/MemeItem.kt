@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -19,7 +20,8 @@ import com.example.memeow.R
 @Composable
 fun MemeItem(
     @DrawableRes drawable: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onImageClick: (drawable: Int) -> Unit
 ) {
     Surface(
         shape = MaterialTheme.shapes.small,
@@ -31,6 +33,9 @@ fun MemeItem(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(168.dp)//the image size display in lazy grid
+                .clickable {
+                    onImageClick(drawable)
+                }
         )
     }
 }
@@ -38,5 +43,8 @@ fun MemeItem(
 @Composable
 @Preview
 fun MemeItemPreview() {
-    MemeItem(drawable = R.drawable.cat_1)
+    MemeItem(
+        drawable = R.drawable.cat_1,
+        onImageClick = {}
+    )
 }

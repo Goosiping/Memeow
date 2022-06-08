@@ -18,7 +18,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material.Scaffold
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.memeow.feature_main.presentation.navTab
+import com.example.memeow.feature_main.presentation.navigateToSingleView
+import com.example.memeow.feature_main.presentation.navigationBar
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -27,27 +30,24 @@ class MainActivity : ComponentActivity() {
         setContent {
             MemeowTheme {
                 val navController = rememberNavController()
+                val backStackEntry = navController.currentBackStackEntryAsState()
+                val currentScreen = MemeowScreen.fromRoute(backStackEntry.value?.destination?.route)
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    ExploreScreen( viewModel = hiltViewModel())
-                }
-                Scaffold(
-                    bottomBar = { navTab() }
-                ){innerPadding ->
-                    NavHost(
-                        navController = navController,
-                        startDestination = "ExploreScreen",
-                        modifier = Modifier
-                    ){
-                        composable("ExploreScreen"){
-                            ExploreScreen()
+                    ExploreScreen(
+                        viewModel = hiltViewModel(),
+                        onImageClick = { image ->
+                            navigateToSingleView(navController = navController, image = image)
                         }
-                    }
-
+                    )
                 }
+                navigationBar(
+                    navController = navController,
+                    currentScreen
+                )
             }
 
         }

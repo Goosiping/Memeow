@@ -24,7 +24,8 @@ private const val TAG = "ExploreScreen"
 @Composable
 fun ExploreScreen(
     //navController: NavController,
-    viewModel: ExploreViewModel = hiltViewModel()
+    viewModel: ExploreViewModel = hiltViewModel(),
+    onImageClick: (Int) ->Unit
 ) {
     val state = viewModel.state.value
     Log.i(TAG, "ExploreScreen")
@@ -55,7 +56,10 @@ fun ExploreScreen(
             LazyVerticalGrid(columns = GridCells.Fixed(2)){
                 Log.i(TAG, "LazyVerticalGrid")
                 items(state.memes) { meme ->
-                    MemeItem(drawable = meme.image)
+                    MemeItem(
+                        drawable = meme.image,
+                        onImageClick = { onImageClick(meme.image) }
+                    )
                 }
             }
         }
@@ -66,5 +70,8 @@ fun ExploreScreen(
 @Composable
 @Preview
 fun ExploreScreenPreview() {
-    ExploreScreen( viewModel = hiltViewModel())
+    ExploreScreen(
+        viewModel = hiltViewModel(),
+        onImageClick = {}
+    )
 }

@@ -55,7 +55,7 @@ class ExploreViewModel @Inject constructor(
         getMemesJob = memeUseCases.getMemes() // request the new flow
             .onEach { memes ->
                 _state.value = state.value.copy( // flow overwrite the modified memes
-                    memes = if (keyword != null) memes.filter{ keyword in it.tags }  else memes // TODO: should have filtered in repository
+                    memes = if (keyword == null || keyword == "") memes  else  memes.filter{ keyword in it.tags }// TODO: should have filtered in repository
                 )
             }
             .launchIn(viewModelScope)

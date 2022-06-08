@@ -1,5 +1,9 @@
 package com.example.memeow.feature_main.presentation
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.*
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.Icons
@@ -8,10 +12,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.memeow.MemeowScreen
+
+@Composable
+fun MemeowTabRow(
+    allScreens: List<MemeowScreen>,
+    onTabSelected: (MemeowScreen) -> Unit,
+    currentScreen: MemeowScreen
+) {
+    Surface(
+        Modifier
+            .fillMaxWidth()
+    ) {
+        Row(Modifier.selectableGroup()) {
+            allScreens.forEach { screen ->
+                MemeowTab(
+                    text = screen.name,
+                    onSelected = { onTabSelected(screen) },
+                    selected = currentScreen == screen
+                )
+            }
+        }
+    }
+}
+@Composable
+private fun MemeowTab(
+    text: String,
+    onSelected: () -> Unit,
+    selected: Boolean
+){
+
+}
 
 @Composable
 fun navTab(
     modifier: Modifier = Modifier,
+    currentScreen: MemeowScreen,
+    onClick:(MemeowScreen) -> Unit
 ){
     BottomNavigation(
         backgroundColor = MaterialTheme.colors.background,
@@ -25,8 +63,8 @@ fun navTab(
                     contentDescription = null
                 ) },
             label = { Text("編輯") },
-            selected = false,
-            onClick = { /*TODO*/ }
+            selected = (currentScreen == MemeowScreen.Edit),
+            onClick = {  }
         )
 
         BottomNavigationItem(
@@ -36,8 +74,8 @@ fun navTab(
                     contentDescription = null
                 ) },
             label = { Text("探索") },
-            selected = true,
-            onClick = { /*TODO*/ }
+            selected = (currentScreen == MemeowScreen.Explore),
+            onClick = { onClick(MemeowScreen.Explore) }
         )
 
         BottomNavigationItem(
@@ -47,8 +85,8 @@ fun navTab(
                     contentDescription = null
                 ) },
             label = { Text("你的梗圖") },
-            selected = false,
-            onClick = { /*TODO*/ }
+            selected = (currentScreen == MemeowScreen.Local),
+            onClick = { onClick(MemeowScreen.Local) }
         )
     }
 }
