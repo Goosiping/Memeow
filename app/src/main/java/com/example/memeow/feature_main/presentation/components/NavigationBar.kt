@@ -1,5 +1,6 @@
 package com.example.memeow.feature_main.presentation
 
+import android.net.Uri
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -48,20 +49,24 @@ fun navigationBar(
                 )
             }
             composable(MemeowScreen.Local.name){
-                LocalBody()
+                LocalBody(
+                    onImageClick = { image ->
+                        navigateToSingleView(navController = navController, image = image)
+                    }
+                )
             }
             composable(
                 route = "$screenName/{image}",
                 arguments = listOf(
                     navArgument("image"){
-                        type = NavType.IntType
+                        type = NavType.StringType
                     }
                 )
             ){ entry ->
-                val imageId = entry.arguments?.getInt("image")
+                val imageId = entry.arguments?.getString("image")
 
                 if (imageId != null) {
-                    singleViewBody(drawable = imageId)
+                    singleViewBody(imageUri =  Uri.parse(imageId.replace('\\', '/')))
                 }
             }
         }
@@ -70,7 +75,8 @@ fun navigationBar(
 
 fun navigateToSingleView(
     navController: NavHostController,
-    image: Int
+    image: Uri
 ){
-    navController.navigate("${MemeowScreen.Explore.name}/$image")
+    val modifiedUri = image.toString().replace('/', '\\')
+    navController.navigate("${MemeowScreen.Explore.name}/$modifiedUri")
 }

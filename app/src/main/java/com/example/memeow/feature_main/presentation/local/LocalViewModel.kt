@@ -1,4 +1,4 @@
-package com.example.memeow.feature_main.presentation.explore
+package com.example.memeow.feature_main.presentation.local
 
 import android.provider.ContactsContract
 import androidx.compose.runtime.State
@@ -15,11 +15,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ExploreViewModel @Inject constructor(
+class LocalViewModel @Inject constructor(
     private val memeUseCases: MemeUseCases
 ): ViewModel() {
-    private val _state = mutableStateOf(ExploreState())
-    val state: State<ExploreState> = _state
+    private val _state = mutableStateOf(LocalState())
+    val state: State<LocalState> = _state
 
     private var recentlyDeletedMeme: Meme? = null
 
@@ -29,18 +29,18 @@ class ExploreViewModel @Inject constructor(
         getMemes(null)
     }
 
-    fun onEvent(event: ExploreEvents) {
+    fun onEvent(event: LocalEvents) {
         when(event) {
-            is ExploreEvents.Search -> {
+            is LocalEvents.Search -> {
                 getMemes(event.keyword)
             }
-            is ExploreEvents.DeleteMeme -> {
+            is LocalEvents.DeleteMeme -> {
                 viewModelScope.launch{
-                    memeUseCases.deleteMeme(event.meme) //ExploreEvents.DeleteMeme val meme
+                    memeUseCases.deleteMeme(event.meme) //LocalEvents.DeleteMeme val meme
                     recentlyDeletedMeme = event.meme
                 }
             }
-            is ExploreEvents.RestoreMeme -> {
+            is LocalEvents.RestoreMeme -> {
                 viewModelScope.launch{
                     memeUseCases.addMeme(recentlyDeletedMeme?:return@launch) // recentlyDeletedMeme is nullable
                     recentlyDeletedMeme = null
@@ -51,7 +51,7 @@ class ExploreViewModel @Inject constructor(
 
     private fun getMemes(keyword: String?){
         getMemesJob?.cancel()                 // cancel the subscription to the previous flow
-        getMemesJob = memeUseCases.exploreMemes() // request the new flow
+        getMemesJob = memeUseCases.getMemes() // request the new flow
             .onEach { memes ->
                 _state.value = state.value.copy( // flow overwrite the modified memes
                     memes = if (keyword == null || keyword == "") memes  else  memes.filter{ keyword in it.tags }// TODO: should have filtered in repository
