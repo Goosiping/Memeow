@@ -93,6 +93,14 @@ dependencies {
 
     // Kotlin Extensions and Coroutines support for Room
     implementation "androidx.room:room-ktx:2.3.0"
+
+    //Mateiral Design3
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation "androidx.compose.material3:material3:1.0.0-alpha02"
+
+    //Flow row
+    implementation "com.google.accompanist:accompanist-flowlayout:0.23.1"
+
 }
 
 kapt {
