@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Memeow</string>
+
+
+    <string name="meme_input_label">梗圖貓鍵盤</string>
+    <string name="keyboard_placeholder_search">搜尋梗圖</string>
+
+
 </resources>

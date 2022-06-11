@@ -1,5 +1,7 @@
 package com.example.memeow.di
 
+import com.example.memeow.feature_keyboard.domain.use_case.KeyboardUseCases
+import com.example.memeow.feature_keyboard.domain.use_case.SendMeme
 import com.example.memeow.feature_main.data.repository.FakeMemeRepository
 import com.example.memeow.feature_main.domain.repository.MemeRepository
 import com.example.memeow.feature_main.domain.use_case.AddMeme
@@ -34,4 +36,16 @@ object AppModule {
             addMeme = AddMeme(repository)
         )
     }
+
+
+    /*----Keyboard-------*/
+    /*UseCases*/
+    @Provides
+    @Singleton
+    fun provideKeyboardUseCases(): KeyboardUseCases {
+        return KeyboardUseCases(
+            sendMeme = SendMeme()
+        )
+    }
+
 }
