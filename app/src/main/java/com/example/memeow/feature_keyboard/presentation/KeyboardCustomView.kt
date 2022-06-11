@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.AbstractComposeView
 import com.example.memeow.ui.theme.MemeowTheme
 
-
+/*
 class KeyboardCustomView(context: Context) : AbstractComposeView(context) {
 
     lateinit var viewModel:KeyboardViewModel
@@ -17,4 +17,4 @@ class KeyboardCustomView(context: Context) : AbstractComposeView(context) {
         }
     }
 
-}
+}*/

@@ -1,5 +1,6 @@
 package com.example.memeow.feature_keyboard.presentation
 
+import android.net.Uri
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -37,15 +38,15 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberAsyncImagePainter
 import com.example.memeow.R
 import com.example.memeow.feature_keyboard.presentation.util.KeyboardUtil
 import com.example.memeow.feature_main.domain.model.Meme
 
 
 @Composable
-fun KeyboardScreen(
-    viewModel: KeyboardViewModel = hiltViewModel()
-) {
+fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
+
     val TAG = "KeyboardScreen"
 
     val state = viewModel.state.value
@@ -63,14 +64,8 @@ fun KeyboardScreen(
     )
 
 
-    /*Temp data for testing ui*/
-    val memes = mutableListOf<Meme>(
-        Meme("cat_1", R.drawable.cat_1, listOf("cat", "1")),
-        Meme("cat_2", R.drawable.cat_2, listOf("cat", "2")),
-        Meme("cat_1", R.drawable.cat_1, listOf("cat", "1")),
-        Meme("cat_2", R.drawable.cat_2, listOf("cat", "2")),
-        Meme("cat_3", R.drawable.cat_3, listOf("cat", "3"))
-    )
+
+
     val tags = mutableListOf<String>(
         "柴犬", "哭哭貓", "海綿寶寶"
     )
@@ -166,7 +161,7 @@ fun KeyboardScreen(
                     .padding(horizontal = 18.dp)
                     .padding(top = 12.dp),
             ) {
-                items(memes) { item ->
+                items(state.memes) { item ->
                     KeyboardMemeCard(item.image,
                         onClickMethod = { viewModel.onEvent(KeyboardEvent.ClickMeme(item)) }
                     )
@@ -256,7 +251,7 @@ fun RandomButton(
 
 @Composable
 fun KeyboardMemeCard(
-    @DrawableRes drawable: Int,
+    imageUri: Uri,
     modifier: Modifier = Modifier,
     onClickMethod: () -> Unit = {}
 ) {
@@ -270,7 +265,7 @@ fun KeyboardMemeCard(
                 .fillMaxWidth()
         ) {
             Image(
-                painter = painterResource(drawable),
+                painter = rememberAsyncImagePainter(imageUri),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

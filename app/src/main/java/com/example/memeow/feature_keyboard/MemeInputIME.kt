@@ -3,6 +3,7 @@ package com.example.memeow.feature_keyboard
 
 import android.app.AppOpsManager
 import android.content.ClipDescription
+import android.content.Context
 import android.inputmethodservice.InputMethodService
 import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
@@ -12,13 +13,18 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.AbstractComposeView
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Observer
 import com.example.memeow.feature_keyboard.presentation.*
 
 import com.example.memeow.feature_keyboard.presentation.util.KeyboardUtil
+import com.example.memeow.ui.theme.MemeowTheme
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlin.properties.Delegates
 
 
@@ -32,14 +38,32 @@ class MemeInputIME : InputMethodService(), KeyboardView.OnKeyboardActionListener
     private val keyboardViewLifecycleOwner = KeyboardViewLifecycleOwner()
 
 
-    //For english input method
-    private var kv: KeyboardView? = null
-    private var keyboard: Keyboard? = null
-    private val caps = false
+    lateinit var view: KeyboardCustomView
 
     override fun onCreate() {
         super.onCreate()
         keyboardViewLifecycleOwner.onCreate()
+    }
+
+
+    inner class KeyboardCustomView(context: Context) : AbstractComposeView(context) {
+
+        lateinit var viewModel:KeyboardViewModel
+
+        @Composable
+        override fun Content() {
+            MemeowTheme {
+                //viewModel = hiltViewModel<KeyboardViewModel>()
+                viewModel = KeyboardViewModel(context,application)
+                viewModel.observeViewModelEvents().observe(keyboardViewLifecycleOwner, Observer {
+                    val event = it.takeUnless { it == null || it.handled } ?: return@Observer
+                    handleViewModelAction(event)
+                })
+
+                KeyboardScreen(viewModel = viewModel)
+            }
+        }
+
     }
 
     override fun onCreateInputView(): View {
@@ -50,18 +74,19 @@ class MemeInputIME : InputMethodService(), KeyboardView.OnKeyboardActionListener
 
 
 
-        val view = KeyboardCustomView(this)
-        view.viewModel = KeyboardViewModel()
+        view = KeyboardCustomView(this)
+        /*
         view.viewModel.observeViewModelEvents().observe(keyboardViewLifecycleOwner, Observer {
             val event = it.takeUnless { it == null || it.handled } ?: return@Observer
             handleViewModelAction(event)
-        })
-
+        })*/
         return view
     }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         keyboardViewLifecycleOwner.onResume()
+
+
 
 
     }
@@ -80,11 +105,8 @@ class MemeInputIME : InputMethodService(), KeyboardView.OnKeyboardActionListener
 
         when(event){
             is KeyboardSendMemeEvent ->{
-                //todo: Send Meme From Selected meme's uri
-                val sendingUri = KeyboardUtil.getUriToResource(applicationContext, com.example.memeow.R.drawable.cat_2)
-
-                Log.i(TAG,"handleViewModelAction, Send() ${event.meme} $sendingUri")
-                commitText(event.meme.title)
+                val sendingUri = event.meme.image
+                Log.i(TAG,"handleViewModelAction, SendURI() ${event.meme} $sendingUri")
                 doCommitContent("Send a meme", MIME_TYPE_PNG, sendingUri)
 
                 Log.i(TAG,"$currentInputConnection ${currentInputEditorInfo.packageName}  ${currentInputEditorInfo.label}")
@@ -93,7 +115,7 @@ class MemeInputIME : InputMethodService(), KeyboardView.OnKeyboardActionListener
                 Log.i(TAG,"handleViewModelAction, SendText(${event.text})")
                 //commitText(event.text)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-
+                    //TODO
                     Log.i(TAG,"currentInputConnection.closeConnection()")
                     //currentInputConnection.closeConnection()
 
@@ -129,7 +151,6 @@ class MemeInputIME : InputMethodService(), KeyboardView.OnKeyboardActionListener
         if (!validatePackageName(editorInfo)) {
             return
         }
-
 
         /*if contentUri is null, we use file to get uri.
             contentUri = FileProvider.getUriForFile(this, AUTHORITY, file!!)

@@ -1,5 +1,7 @@
 package com.example.memeow
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +18,8 @@ import com.example.memeow.feature_main.presentation.explore.ExploreScreen
 import com.example.memeow.ui.theme.MemeowTheme
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material.Scaffold
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -27,6 +31,7 @@ import com.example.memeow.feature_main.presentation.navigationBar
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestPermission()
         setContent {
             MemeowTheme {
                 val navController = rememberNavController()
@@ -52,6 +57,48 @@ class MainActivity : ComponentActivity() {
 
         }
     }
+
+    private fun requestPermission() {
+        if (!haveStoragePermission()) {
+            val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 100
+            )
+        }
+        if (!haveInternetPermission()) {
+            val permissions = arrayOf(Manifest.permission.INTERNET)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.INTERNET), 100
+            )
+        }
+        if (!haveNetStatePermission()) {
+            val permissions = arrayOf(Manifest.permission.ACCESS_NETWORK_STATE)
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_NETWORK_STATE), 100
+            )
+        }
+    }
+    private fun haveStoragePermission() =
+        ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
+    private fun haveInternetPermission() =
+        ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.INTERNET
+        ) == PackageManager.PERMISSION_GRANTED
+
+    private fun haveNetStatePermission() =
+        ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_NETWORK_STATE
+        ) == PackageManager.PERMISSION_GRANTED
+
 }
 
 @Composable

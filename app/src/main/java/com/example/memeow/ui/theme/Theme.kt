@@ -17,8 +17,10 @@ private val LightColorPalette = lightColors(
     primary = Purple500,
 
     //primaryVariant = Purple700,
-    primaryVariant = Color(0xFFC8A415), // Golden
     secondary = Teal200,
+
+    //primaryVariant = Purple700,
+    primaryVariant = Color(0xFFC8A415), // Golden
     surface = Color(0xFFFFFEFB),
     background = Color(0xFFE9E9E9), // Search bar background(background gray)
 

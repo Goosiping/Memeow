@@ -1,4 +1,4 @@
-package com.example.memeow.feature_main.presentation.explore.components
+package com.example.memeow.feature_main.presentation.local.components
 
 import android.net.Uri
 import androidx.annotation.DrawableRes

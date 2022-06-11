@@ -1,5 +1,6 @@
 package com.example.memeow.feature_main.presentation.explore
 
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,7 @@ private const val TAG = "ExploreScreen"
 fun ExploreScreen(
     //navController: NavController,
     viewModel: ExploreViewModel = hiltViewModel(),
-    onImageClick: (Int) ->Unit
+    onImageClick: (Uri) ->Unit
 ) {
     val state = viewModel.state.value
     Log.i(TAG, "ExploreScreen")
@@ -56,8 +57,9 @@ fun ExploreScreen(
             LazyVerticalGrid(columns = GridCells.Fixed(2)){
                 Log.i(TAG, "LazyVerticalGrid")
                 items(state.memes) { meme ->
+                    //Log.d("","imageUri = ${meme.image}")
                     MemeItem(
-                        drawable = meme.image,
+                        imageUri = meme.image,
                         onImageClick = { onImageClick(meme.image) }
                     )
                 }

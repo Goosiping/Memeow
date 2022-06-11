@@ -1,34 +1,47 @@
 package com.example.memeow.feature_keyboard.presentation
 
+import android.app.Application
+import android.content.Context
 import android.util.Log
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SentimentSatisfied
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.*
+import com.example.memeow.di.AppModule
 import com.example.memeow.feature_keyboard.domain.use_case.KeyboardUseCases
 import com.example.memeow.feature_keyboard.domain.use_case.SendMeme
-
+import com.example.memeow.feature_main.data.data_source.remote.MemeApi
+import com.example.memeow.feature_main.data.repository.FakeMemeRepository
+import com.example.memeow.feature_main.domain.model.Meme
+import com.example.memeow.feature_main.domain.repository.MemeRepository
+import com.example.memeow.feature_main.domain.use_case.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
+import java.security.AccessController.getContext
 import javax.inject.Inject
 
 
 
-@HiltViewModel
-class KeyboardViewModel @Inject constructor(
+class KeyboardViewModel(
+    context: Context,
+    application: Application
 ): ViewModel() {
 
-    /*I realllly don't know why if i put keyboardUseCases in constructor parameter to let hilt inject, it will be broken.
+    /*I realllly don't know why if i put keyboardUseCases in constructor parameter to let hilt injec
+    t, it will be broken. SO i change into without @HiltVieModel and @Inject constuctor
     * so i move it to here
     * */
-
     private lateinit var keyboardUseCases: KeyboardUseCases
-
+    private lateinit var memeUseCases: MemeUseCases
+    private lateinit var repository: MemeRepository
 
     private val _state = mutableStateOf(KeyboardState())
     val state: State<KeyboardState> = _state
@@ -36,6 +49,12 @@ class KeyboardViewModel @Inject constructor(
     private val TAG ="KeyboardViewModel"
     private val observableEvents = MutableLiveData<KeyboardViewModelEvent>()
     fun observeViewModelEvents(): LiveData<KeyboardViewModelEvent> = observableEvents
+
+    private var getMemesJob: Job? = null
+
+    init {
+        //getMemes(null)
+    }
 
     private fun postViewModelEvent(event: KeyboardViewModelEvent) {
         observableEvents.postValue(event)
@@ -134,6 +153,16 @@ class KeyboardViewModel @Inject constructor(
     }
 
 
+    private fun getMemes(keyword: String?){
+        getMemesJob?.cancel()                 // cancel the subscription to the previous flow
+        getMemesJob = memeUseCases.getMemes() // request the new flow
+            .onEach { memes ->
+                _state.value = state.value.copy( // flow overwrite the modified memes
+                    memes = if (keyword == null || keyword == "") memes  else  memes.filter{ keyword in it.tags }// TODO: should have filtered in repository
+                )
+            }
+            .launchIn(viewModelScope)
+    }
 
 
     init {
@@ -141,5 +170,13 @@ class KeyboardViewModel @Inject constructor(
         keyboardUseCases = KeyboardUseCases(
             sendMeme = SendMeme()
         )
+        val api = AppModule.provideDictionaryApi()
+        val db = AppModule.provideMemeDatabase(application)
+        val repository = AppModule.provideNoteRepository(context, db,api)
+        memeUseCases = AppModule.provideNoteUseCases(repository)
+
+        getMemes(null)
+        //AppModule.provideNoteUseCases(AppModule.provideDictionaryApi())
+
     }
 }
