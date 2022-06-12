@@ -74,9 +74,9 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
         modifier = Modifier
             .background(MaterialTheme.colors.surface)
             .fillMaxWidth()
-            .height(430.dp)
-
-            .padding(vertical = 16.dp)
+            .height(405.dp)
+            .padding(top = 16.dp, bottom = 30.dp),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
 
 
@@ -96,7 +96,7 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
                     state.searchTextFieldValue,
                     Modifier
                         .weight(1f)
-                        .heightIn(min = 50.dp),
+                        .heightIn(min = 40.dp),
                     onClickMethod = {
                         viewModel.onEvent(KeyboardEvent.TouchSearchBar)
                     }
@@ -104,7 +104,10 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
                 RandomButton(
                     Modifier
                         .padding(start = 8.dp)
-                        .size(50.dp)
+                        .size(40.dp),
+                    onClickMethod = {
+                        viewModel.onEvent(KeyboardEvent.SendRandomMeme)
+                    }
                 )
             }
         }
@@ -157,9 +160,8 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 modifier = Modifier
-                    .height(300.dp)//TODO?
                     .padding(horizontal = 18.dp)
-                    .padding(top = 12.dp),
+                    .fillMaxHeight()
             ) {
                 items(state.memes) { item ->
                     KeyboardMemeCard(item.image,
@@ -170,7 +172,9 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
             }
 
         }
-        KeyboardBottomBar(tags = tags)
+        KeyboardBottomBar(
+            modifier = Modifier.heightIn(55.dp,60.dp).requiredHeight(55.dp)
+            ,tags = tags)
 
     }
 
@@ -233,10 +237,11 @@ fun SearchBar(
 
 @Composable
 fun RandomButton(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClickMethod: () -> Unit
 ) {
     IconButton(
-        onClick = { Log.i("TEST", "Button Click!") },
+        onClick = { onClickMethod() },
         modifier = modifier
     ) {
         Icon(
@@ -273,7 +278,6 @@ fun KeyboardMemeCard(
                     .clip(RoundedCornerShape(6.dp))
                     .clickable(
                         onClick = onClickMethod
-                        //Log.i(TAG, "You click an image from keyboard")
                     )
 
             )
@@ -290,18 +294,16 @@ fun KeyboardBottomBar(
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(60.dp),
+            .height(70.dp),
         color = MaterialTheme.colors.surface,
         elevation = 5.dp
     ) {
-        val textChipRememberOneState = remember {
-            mutableStateOf(false)
-        }
 
         Row(
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(start = 16.dp)
+
 
         ) {
             Icon(
@@ -313,6 +315,10 @@ fun KeyboardBottomBar(
                 //verticalAlignment = Alignment.CenterVertically
             ) {
                 items(tags) { item ->
+                    val textChipRememberOneState = remember {
+                        mutableStateOf(false)
+                    }
+
                     KeyboardChip(isSelected = textChipRememberOneState.value, text = item,
                         onChecked = { textChipRememberOneState.value = it })
                 }

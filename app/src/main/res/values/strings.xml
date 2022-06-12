@@ -6,4 +6,20 @@
     <string name="keyboard_placeholder_search">搜尋梗圖</string>
 
 
+    <string name="edit_select_template_button">使用這個模板製作梗圖</string>
+    <string name="title_activity_edit">EditActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+
+    <string name="edit_page_title">編輯梗圖</string>
+
+    <string name="edit_button_text">插入文字</string>
+    <string name="edit_button_undo">復原</string>
+    <string name="edit_button_redo">取消復原</string>
+    <string name="edit_button_image">插入圖片</string>
+
 </resources>

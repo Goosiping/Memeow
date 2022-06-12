@@ -9,4 +9,5 @@ sealed class KeyboardEvent {
     object TouchSearchBar: KeyboardEvent()
     object ReturnText : KeyboardEvent()
     object CapsLock : KeyboardEvent()
+    object SendRandomMeme: KeyboardEvent()
 }

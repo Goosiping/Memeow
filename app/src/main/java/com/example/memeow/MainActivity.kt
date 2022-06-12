@@ -3,6 +3,7 @@ package com.example.memeow
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,11 +19,13 @@ import com.example.memeow.feature_main.presentation.explore.ExploreScreen
 import com.example.memeow.ui.theme.MemeowTheme
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.material.Scaffold
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+
 import com.example.memeow.feature_main.presentation.navTab
 import com.example.memeow.feature_main.presentation.navigateToSingleView
 import com.example.memeow.feature_main.presentation.navigationBar
@@ -34,9 +37,11 @@ class MainActivity : ComponentActivity() {
         requestPermission()
         setContent {
             MemeowTheme {
+
                 val navController = rememberNavController()
                 val backStackEntry = navController.currentBackStackEntryAsState()
                 val currentScreen = MemeowScreen.fromRoute(backStackEntry.value?.destination?.route)
+
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -49,10 +54,15 @@ class MainActivity : ComponentActivity() {
                         }
                     )
                 }
+
+
                 navigationBar(
                     navController = navController,
-                    currentScreen
+                    currentScreen,
+                    backStackEntry.value?.destination?.route
                 )
+
+
             }
 
         }
@@ -80,7 +90,12 @@ class MainActivity : ComponentActivity() {
                 arrayOf(Manifest.permission.ACCESS_NETWORK_STATE), 100
             )
         }
+
+
+        /**Edit*/
+        checkAndRequestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
+
     private fun haveStoragePermission() =
         ContextCompat.checkSelfPermission(
             this,
@@ -99,6 +114,25 @@ class MainActivity : ComponentActivity() {
             Manifest.permission.ACCESS_NETWORK_STATE
         ) == PackageManager.PERMISSION_GRANTED
 
+    private fun haveWriteFilePermission() =
+        ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+
+    private fun checkAndRequestPermission(permission: String) {
+        val havePermission = ContextCompat.checkSelfPermission(
+            this, permission
+        ) == PackageManager.PERMISSION_GRANTED
+
+        if (!havePermission) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(permission), 100
+            )
+        }
+
+    }
 }
 
 @Composable
@@ -113,3 +147,5 @@ fun DefaultPreview() {
         Greeting("Android")
     }
 }
+
+

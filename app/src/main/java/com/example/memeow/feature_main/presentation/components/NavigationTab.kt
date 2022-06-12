@@ -1,18 +1,16 @@
 package com.example.memeow.feature_main.presentation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.*
-import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Explore
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FolderOpen
-import androidx.compose.material.Icon
-import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.memeow.MemeowScreen
 
 @Composable
@@ -56,6 +54,8 @@ fun navTab(
         modifier = modifier
     ) {
 
+
+
         BottomNavigationItem(
             icon = {
                 Icon(
@@ -64,7 +64,7 @@ fun navTab(
                 ) },
             label = { Text("編輯") },
             selected = (currentScreen == MemeowScreen.Edit),
-            onClick = {  }
+            onClick = { onClick(MemeowScreen.Edit) }
         )
 
         BottomNavigationItem(
@@ -90,3 +90,4 @@ fun navTab(
         )
     }
 }
+

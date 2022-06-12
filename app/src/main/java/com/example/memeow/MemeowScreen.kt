@@ -29,5 +29,6 @@ enum class MemeowScreen (val icon: ImageVector){
                 null -> Explore
                 else -> throw IllegalArgumentException("Route $route is not recognized.")
             }
+
     }
 }

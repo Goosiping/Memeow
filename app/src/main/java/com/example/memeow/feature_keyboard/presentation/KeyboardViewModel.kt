@@ -52,10 +52,6 @@ class KeyboardViewModel(
 
     private var getMemesJob: Job? = null
 
-    init {
-        //getMemes(null)
-    }
-
     private fun postViewModelEvent(event: KeyboardViewModelEvent) {
         observableEvents.postValue(event)
     }
@@ -69,7 +65,6 @@ class KeyboardViewModel(
                     keyboardUseCases.sendMeme(event.meme)
                     Log.i(TAG,"SEND MEME()")
                     postViewModelEvent(KeyboardSendMemeEvent(event.meme))
-
                 }
             }
             is KeyboardEvent.TypeText ->{
@@ -113,6 +108,9 @@ class KeyboardViewModel(
             }
             is KeyboardEvent.CapsLock->{
                 toggleCapsLock()
+            }
+            is KeyboardEvent.SendRandomMeme->{
+                postViewModelEvent(KeyboardSendMemeEvent(state.value.memes.random()))
             }
 
 

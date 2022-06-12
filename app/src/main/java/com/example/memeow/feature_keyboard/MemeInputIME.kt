@@ -33,7 +33,7 @@ import kotlin.properties.Delegates
 * */
 
 @AndroidEntryPoint
-class MemeInputIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
+open class MemeInputIME : InputMethodService(), KeyboardView.OnKeyboardActionListener {
 
     private val keyboardViewLifecycleOwner = KeyboardViewLifecycleOwner()
 
@@ -72,21 +72,12 @@ class MemeInputIME : InputMethodService(), KeyboardView.OnKeyboardActionListener
             window?.window?.decorView
         )
 
-
-
         view = KeyboardCustomView(this)
-        /*
-        view.viewModel.observeViewModelEvents().observe(keyboardViewLifecycleOwner, Observer {
-            val event = it.takeUnless { it == null || it.handled } ?: return@Observer
-            handleViewModelAction(event)
-        })*/
         return view
     }
 
     override fun onStartInputView(info: EditorInfo?, restarting: Boolean) {
         keyboardViewLifecycleOwner.onResume()
-
-
 
 
     }

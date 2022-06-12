@@ -2,8 +2,13 @@ package com.example.memeow.di
 
 import android.app.Application
 import android.content.Context
+import android.graphics.Typeface
 import android.util.Log
+import androidx.core.content.res.ResourcesCompat
 import androidx.room.Room
+import com.example.memeow.R
+import com.example.memeow.feature_edit_image.presentation.domain.use_case.GetTemplates
+import com.example.memeow.feature_edit_image.presentation.domain.use_case.ViewTemplateUseCase
 import com.example.memeow.feature_keyboard.domain.use_case.KeyboardUseCases
 import com.example.memeow.feature_keyboard.domain.use_case.SendMeme
 import com.example.memeow.feature_main.data.data_source.local.MemeDatabase
@@ -82,5 +87,18 @@ object AppModule {
             sendMeme = SendMeme()
         )
     }
+
+    /*Edit ViewTemplate
+    * TODO what is this template repo?
+    * */
+    @Provides
+    @Singleton
+    fun provideViewTemplateUseCase(repository: MemeRepository): ViewTemplateUseCase{
+        return ViewTemplateUseCase(
+            getTemplates = GetTemplates(repository)
+        )
+    }
+
+
 
 }
