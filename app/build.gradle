@@ -101,10 +101,20 @@ dependencies {
     implementation "androidx.room:room-ktx:2.3.0"
 
 
+
     //Photo editor
     implementation 'com.burhanrashid52:photoeditor:2.0.0'
 
     implementation 'androidx.appcompat:appcompat:1.4.2'
+
+    //Mateiral Design3
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation "androidx.compose.material3:material3:1.0.0-alpha02"
+
+    //Flow row
+    implementation "com.google.accompanist:accompanist-flowlayout:0.23.1"
+
+
 }
 
 kapt {

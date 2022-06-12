@@ -14,8 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.example.memeow.MemeowScreen
 import com.example.memeow.feature_main.presentation.local.components.MainBar
 import com.example.memeow.feature_main.presentation.local.components.MemeItem
+import com.example.memeow.feature_main.presentation.navigationBar
 
 /*
 @Composable
@@ -30,7 +33,6 @@ private const val TAG = "LocalScreen"
 
 @Composable
 fun LocalBody(
-    //navController: NavController,
     viewModel: LocalViewModel = hiltViewModel(),
     onImageClick: (Uri) ->Unit
 ) {
@@ -48,7 +50,7 @@ fun LocalBody(
                 onSearchClicked = { viewModel.onEvent(LocalEvents.Search(keyword = state.keyword))},
                 onSearchTrigger = { viewModel.updatebar(true) }
             )
-        }
+        },
     ) {
         Column(
             modifier = Modifier
@@ -66,7 +68,8 @@ fun LocalBody(
                     //Log.d("","imageUri = ${meme.image}")
                     MemeItem(
                         imageUri = meme.image,
-                        onImageClick = { onImageClick(meme.image) }
+                        onImageClick = { onImageClick(meme.image) },
+                        modifier = Modifier.padding(4.dp)
                     )
                 }
             }

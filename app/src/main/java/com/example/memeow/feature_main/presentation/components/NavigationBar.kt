@@ -79,7 +79,10 @@ fun navigationBar(
                 val imageId = entry.arguments?.getString("image")
 
                 if (imageId != null) {
-                    singleViewBody(imageUri =  Uri.parse(imageId.replace('\\', '/')))
+                    singleViewBody(
+                        imageUri =  Uri.parse(imageId.replace('\\', '/')),
+                        onClickBack = { navController.popBackStack() }
+                    )
                 }
             }
             composable(MemeowScreen.Edit.name){
