@@ -45,6 +45,7 @@ fun singleViewBody(
                 onClick = { onClickBack() }
             )
         },
+        /*
         bottomBar = {
             BottomNavigation(modifier = Modifier){
                 BottomNavigationItem(
@@ -58,7 +59,7 @@ fun singleViewBody(
                     selected = false
                 )
             }
-        }
+        }*/
     ){ innterPadding ->
         Box(
             modifier = Modifier.padding(innterPadding)

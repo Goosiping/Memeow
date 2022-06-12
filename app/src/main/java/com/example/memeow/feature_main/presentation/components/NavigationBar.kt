@@ -1,20 +1,15 @@
 package com.example.memeow.feature_main.presentation
 
-import android.content.Intent
 import android.net.Uri
-import android.provider.AlarmClock.EXTRA_MESSAGE
 import android.util.Log
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.memeow.feature_main.presentation.explore.ExploreScreen
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.navArgument
 import com.example.memeow.MemeowScreen
 import com.example.memeow.feature_edit_image.presentation.edit_image.EditScreen
@@ -37,7 +32,7 @@ fun navigationBar(
     Scaffold(
 
         bottomBar = {
-            if(!checkIsEditing(currentRoute)){
+            if(!checkHideNavBar(currentRoute)){
                 navTab(
                     modifier = Modifier,
                     currentScreen = currentScreen,
@@ -134,13 +129,15 @@ fun navigateToEditView(
 
 }
 
-fun checkIsEditing(screenName: String?): Boolean {
-
+fun checkHideNavBar(screenName: String?): Boolean {
     if (screenName == null)
         return false
-    Log.i("SCREEN NAME", screenName)
+    /*Check current route(screenName) to decide hide nav bar or not*/
     if (screenName.startsWith(MemeowScreen.Edit.name))
         if (screenName.length > MemeowScreen.Edit.name.length)
+            return true
+    if (screenName.startsWith(MemeowScreen.Explore.name))
+        if (screenName.length > MemeowScreen.Explore.name.length)
             return true
     return false
 }
