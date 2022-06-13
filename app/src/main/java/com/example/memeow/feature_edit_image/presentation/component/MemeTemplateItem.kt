@@ -1,12 +1,15 @@
 package com.example.memeow.feature_edit_image.presentation.component
 
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
@@ -20,6 +23,7 @@ fun MemeTemplateItem(
     modifier: Modifier = Modifier,
     onImageClick: (imageUri: Uri) -> Unit
 ) {
+    var isSelected by remember { mutableStateOf(false) }
     Surface(
         shape = MaterialTheme.shapes.small,
         modifier = modifier
@@ -29,10 +33,10 @@ fun MemeTemplateItem(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(168.dp)//the image size display in lazy grid
                 .clickable {
                     onImageClick(imageUri)
                 }
+                .aspectRatio(1f)
         )
     }
 }

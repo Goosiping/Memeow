@@ -1,5 +1,6 @@
 package com.example.memeow.feature_edit_image.presentation.view_tempate
 
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,8 @@ class ViewTemplateViewModel @Inject constructor(
 
     init {
         getTemplates(keyword = null)
+
+
     }
 
     fun onEvent(event: ViewTemplateEvent) {

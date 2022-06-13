@@ -7,6 +7,10 @@
 
 
     <string name="edit_select_template_button">使用這個模板製作梗圖</string>
+
+
+    <string name="edit_select_template_empty">選擇一個梗圖模板</string>
+
     <string name="title_activity_edit">EditActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -21,5 +25,6 @@
     <string name="edit_button_undo">復原</string>
     <string name="edit_button_redo">取消復原</string>
     <string name="edit_button_image">插入圖片</string>
+    <string name="edit_select_template_blank">使用空白檔案</string>
 
 </resources>

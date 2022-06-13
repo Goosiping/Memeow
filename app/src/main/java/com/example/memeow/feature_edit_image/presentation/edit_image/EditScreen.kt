@@ -2,6 +2,7 @@ package com.example.memeow.feature_edit_image.presentation.edit_image
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
@@ -44,7 +45,7 @@ import ja.burhanrashid52.photoeditor.TextStyleBuilder
 @Composable
 fun EditScreen(
     viewModel: EditViewModel = hiltViewModel<EditViewModel>(),
-    imageUri: Uri,
+    imageUri: Uri?,
     backMethod : () -> Unit
 ) {
     val photoEditorView: PhotoEditorView = rememberPhotoEditorView(imageUri, viewModel)
@@ -81,8 +82,9 @@ fun EditScreen(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp)
+            .padding(top = 10.dp)
             .padding(horizontal = 12.dp)
+            .height(60.dp)
 
     ) {
         IconButton(onClick = { backMethod() }) {
@@ -93,7 +95,7 @@ fun EditScreen(
         }
         Text(
             stringResource(id = R.string.edit_page_title),
-            fontSize = 22.sp,
+            fontSize = 20.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
@@ -248,12 +250,18 @@ fun PhotoEditorViewCompose(photeoEditorView: PhotoEditorView) {
 
 
 @Composable
-fun rememberPhotoEditorView(imageUri: Uri, viewModel: EditViewModel): PhotoEditorView {
+fun rememberPhotoEditorView(imageUri: Uri?, viewModel: EditViewModel): PhotoEditorView {
+
 
     val context = LocalContext.current
     return remember {
         val photoEditorView = PhotoEditorView(context).apply {
             // Sets up listeners for View -> Compose communication
+            if (imageUri == null){
+                source.setImageResource(R.drawable.blank)
+            }else{
+                source.setImageURI(imageUri)
+            }
             source.setImageURI(imageUri)
         }
         viewModel.setPhotoEditor(photoEditorView)

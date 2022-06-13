@@ -5,14 +5,17 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.AlarmClock.EXTRA_MESSAGE
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -24,6 +27,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.memeow.R
 import com.example.memeow.feature_edit_image.presentation.EditActivity
 import com.example.memeow.feature_edit_image.presentation.component.MemeTemplateItem
+import com.example.memeow.feature_main.domain.model.Meme
 import com.example.memeow.feature_main.presentation.explore.components.MainBar
 
 private const val TAG = "EditViewTemplateScreen"
@@ -32,7 +36,7 @@ private const val TAG = "EditViewTemplateScreen"
 fun EditViewTemplateScreen(
     viewModel: ViewTemplateViewModel = hiltViewModel(),
     onImageClick: (Uri) -> Unit,
-    onEditButtonClick: (Uri) -> Unit = {}
+    onEditButtonClick: (Uri?) -> Unit = {}
 ) {
     val context = LocalContext.current
     val state = viewModel.state.value
@@ -65,7 +69,8 @@ fun EditViewTemplateScreen(
                     //Log.d("","imageUri = ${meme.image}")
                     MemeTemplateItem(
                         imageUri = meme.image,
-                        onImageClick = { viewModel.onEvent(ViewTemplateEvent.PreviewTemplate(meme)) }
+                        onImageClick = { viewModel.onEvent(ViewTemplateEvent.PreviewTemplate(meme)) },
+                        modifier = Modifier.padding(2.dp)
                     )
                 }
             }
@@ -75,11 +80,18 @@ fun EditViewTemplateScreen(
                 modifier = Modifier.weight(2f, false),
                 imageUri = state.selectedTemplate?.image,
                 selectOnClickMethod = {
-                    onEditButtonClick(state.selectedTemplate?.image!!)
+                    if(state.selectedTemplate == null){
+                        /**default blank canvas*/
+                        val uri: Uri? = Uri.parse("android.resource://com.example.memeow/drawable/blank");
+                        onEditButtonClick(uri)
+                    }
+                    else{
+                        onEditButtonClick(state.selectedTemplate.image)
+                    }
                     //LaunchEditPage(context,state.selectedTemplate?.image!!)
                     //
                     },
-                buttonEnable = state.selectedTemplate?.image != null
+                hasSelectImg = state.selectedTemplate?.image != null
             )
 
             Spacer(modifier = Modifier.height(70.dp))
@@ -100,7 +112,7 @@ fun PreviewTemplateWindow(
     modifier: Modifier = Modifier,
     imageUri: Uri?,
     selectOnClickMethod:  () -> Unit,
-    buttonEnable: Boolean
+    hasSelectImg: Boolean
 ) {
 
     Surface(
@@ -111,14 +123,17 @@ fun PreviewTemplateWindow(
     ) {
 
         Column(
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(vertical = 16.dp)
         ) {
+            /*
             Text(
                 text = "預覽模板",
                 textAlign = TextAlign.Center,
                 fontSize = MaterialTheme.typography.h6.fontSize,
                 modifier = Modifier.padding(top = 8.dp)
-            )
+            )*/
 
             if (imageUri != null) {
                 Image(
@@ -130,19 +145,47 @@ fun PreviewTemplateWindow(
                         .fillMaxWidth()
                         .requiredHeight(200.dp)
                 )
+            }else{
+                Column(
+                    modifier = Modifier
+                        .height(200.dp)
+                        .fillMaxWidth()
+                        .background(
+                            color = Color.Black.copy(alpha = 0.02f)
+                        ),
+                    verticalArrangement = Arrangement.Center
+                ){
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = stringResource(id = R.string.edit_select_template_empty),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+
             }
 
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(30.dp, 70.dp),
+                ,
                 onClick = {
-
                     selectOnClickMethod()
                 },
-                enabled = buttonEnable
+                //enabled = buttonEnable,
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = colors.onPrimary,
+                    contentColor = Color.White)
             ) {
-                Text(text = stringResource(id = R.string.edit_select_template_button))
+
+                Text(text = if(hasSelectImg) stringResource(id = R.string.edit_select_template_button)
+                    else stringResource(id = R.string.edit_select_template_blank),
+                    fontSize = MaterialTheme.typography.button.fontSize,
+                    color = Color.DarkGray
+
+                )
             }
 
         }

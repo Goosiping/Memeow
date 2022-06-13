@@ -96,7 +96,6 @@ fun navigationBar(
                 )
             ){ entry ->
                 val imageId = entry.arguments?.getString("image")
-
                 if (imageId != null) {
                     EditScreen(imageUri =  Uri.parse(imageId.replace('\\', '/')),
                         backMethod = {navController.popBackStack()}
@@ -117,10 +116,12 @@ fun navigateToSingleView(
 
 fun navigateToEditView(
     navController: NavHostController,
-    image: Uri
+    image: Uri?
 ){
-    /**For some unknown reason, image editor cannot normally use in jetpack compose, it may related jackpack compose rendering lifecycle*/
-
+    if(image == null){
+        /*using blank canvas**/
+        navController.navigate("${MemeowScreen.Edit.name}/-1")
+    }
     val modifiedUri = image.toString().replace('/', '\\')
     navController.navigate("${MemeowScreen.Edit.name}/$modifiedUri")
 
