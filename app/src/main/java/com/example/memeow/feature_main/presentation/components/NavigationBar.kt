@@ -27,10 +27,7 @@ fun navigationBar(
 
     val screenName = MemeowScreen.Explore.name
 
-
-
     Scaffold(
-
         bottomBar = {
             if(!checkHideNavBar(currentRoute)){
                 navTab(

@@ -19,7 +19,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
-
+/*
 // reference: https://www.youtube.com/watch?v=3oXBnM6fZj0
 @Composable
 fun MainBar(
@@ -156,3 +156,5 @@ fun DefaultAppBarPreview() {
         onSearchClicked = { }
     )
 }
+
+ */
