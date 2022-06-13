@@ -4,5 +4,8 @@ data class MemeUseCases(
     val getMemes: GetMemes,
     val exploreMemes: ExploreMemes,
     val addMeme: AddMeme,
-    val deleteMeme: DeleteMeme
+    val deleteMeme: DeleteMeme,
+    val getTagsByUri: GetTagsByUri,
+    val addTagsByUri: AddTagsByUri,
+    val deleteTagsByUri: DeleteTagsByUri,
 )

@@ -1,5 +1,6 @@
 package com.example.memeow.feature_main.domain.repository
 
+import android.net.Uri
 import com.example.memeow.feature_main.domain.model.Meme
 import kotlinx.coroutines.flow.Flow
 
@@ -12,4 +13,10 @@ interface MemeRepository {
     suspend fun insertMeme(meme: Meme)
 
     suspend fun removeMeme(meme: Meme)
+
+    fun getTagsByUri(uri: Uri): Flow<List<String>>
+
+    suspend fun insertTagsByUri(tags: List<String>, uri: Uri)
+
+    suspend fun removeTagsByUri(tags: List<String>, uri: Uri)
 }

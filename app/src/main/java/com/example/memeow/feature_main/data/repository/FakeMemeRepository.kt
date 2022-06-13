@@ -105,6 +105,14 @@ class FakeMemeRepository (
     override fun exploreMemes(): Flow<List<Meme>> {
         return flow{
             val apimemes = api.gettrendingMeme().map{it.toMeme()}
+            val Memestoadd = apimemes.map{
+                MemeEntity(
+                    image = it.image.toString(),
+                    tags = it.tags,
+                    title = it.title
+                )
+            }
+            dao.insertMemes(Memestoadd)
             emit(apimemes)
         }
     }
@@ -116,7 +124,25 @@ class FakeMemeRepository (
         memes.remove(meme)
     }
 
+    override fun getTagsByUri(uri: Uri): Flow<List<String>> {
+        return flow{
+            emit(dao.getMemeByUri(uri.toString()).toMeme().tags)
+        }
+    }
 
+    override suspend fun insertTagsByUri(tags: List<String>, uri: Uri) {
+        val uriString = uri.toString()
+        val oldtags = dao.getMemeByUri(uriString).toMeme().tags
+        val newtags = (tags union oldtags).toList()
+        dao.update(newtags,uriString)
+    }
+
+    override suspend fun removeTagsByUri(tags: List<String>, uri: Uri) {
+        val uriString = uri.toString()
+        val oldtags = dao.getMemeByUri(uriString).toMeme().tags
+        val newtags = (oldtags subtract tags.toSet()).toList()
+        dao.update(newtags,uriString)
+    }
 }
 
 

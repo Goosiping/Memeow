@@ -7,6 +7,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -14,34 +16,44 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.materialIcon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.memeow.MemeowScreen
 import com.example.memeow.feature_main.presentation.components.topBar
 import com.google.accompanist.flowlayout.FlowRow
 import com.example.memeow.feature_main.presentation.components.tagChip
+import com.example.memeow.feature_main.presentation.explore.ExploreViewModel
+import com.example.memeow.feature_main.presentation.explore.components.DefaultAppBar
+import com.example.memeow.feature_main.presentation.explore.components.SearchBar
 
 
 @Composable
 fun singleViewBody(
+    viewModel: SingleViewViewModel = hiltViewModel(),
     imageUri: Uri,
     onClickBack: () -> Unit
 ){
     Log.d("","imageUri = $imageUri")
+    viewModel.getTags(imageUri)
 
-    val tags: List<String>
-    tags = listOf("柴犬", "哭哭貓", "海綿寶寶")
+    val state = viewModel.state.value
+
+    val tags: List<String> = state.tags
 
     Scaffold(
         topBar = {
             topBar(
-                title = "你的梗圖",
+                title = "梗圖",
                 onClick = { onClickBack() }
             )
         },
@@ -97,15 +109,40 @@ fun singleViewBody(
                                 style = MaterialTheme.typography.h4,
                                 modifier = Modifier.padding(16.dp)
                             )
-                            FloatingActionButton(
-                                modifier = Modifier.size(50.dp),
-                                backgroundColor = MaterialTheme.colors.onPrimary,
-                                onClick = { /**ADD TAG**/ }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = null
-                                )
+                            when(state.tagaddactivate){
+                                false -> {
+                                    FloatingActionButton(
+                                        modifier = Modifier.size(50.dp),
+                                        backgroundColor = MaterialTheme.colors.onPrimary,
+                                        onClick = { viewModel.onEvent(SingleViewEvents.PressPlus) }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Add,
+                                            contentDescription = null
+                                        )
+                                    }
+                                }
+                                true-> {
+                                    TextField(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        value = state.keytag,
+                                        onValueChange = { viewModel.onEvent(SingleViewEvents.Updatekeytag(it)) },
+                                        placeholder = {
+                                            Text(
+                                                modifier = Modifier.alpha(ContentAlpha.medium),
+                                                text = "tag"
+                                            )
+                                        },
+                                        keyboardOptions = KeyboardOptions(
+                                            imeAction = ImeAction.Done
+                                        ),
+                                        keyboardActions = KeyboardActions(
+                                            onDone = {
+                                                viewModel.onEvent(SingleViewEvents.PressSend(state.keytag) )
+                                            }
+                                        )
+                                    )
+                                }
                             }
                         }
 
@@ -116,7 +153,7 @@ fun singleViewBody(
                                 tagChip(
                                     text = it,
                                     onClick = { /** EDIT TAG **/ },
-                                    onClose = { /** DELETE TAG**/ }
+                                    onClose = { viewModel.onEvent(SingleViewEvents.DeleteTag(it))}
                                 )
                             }
                         }

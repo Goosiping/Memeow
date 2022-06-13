@@ -21,4 +21,10 @@ interface MemeDao {
 
     @Delete
     suspend fun deleteMeme(meme: MemeEntity)
+
+    @Query("SELECT * FROM meme WHERE image = :uri")
+    suspend fun getMemeByUri(uri: String): MemeEntity
+
+    @Query("UPDATE meme SET tags = :tags WHERE image = :uri")
+    suspend fun update(tags: List<String>, uri: String)
 }

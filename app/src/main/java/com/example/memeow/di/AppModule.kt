@@ -73,7 +73,10 @@ object AppModule {
             getMemes = GetMemes(repository),
             exploreMemes = ExploreMemes(repository),
             deleteMeme = DeleteMeme(repository),
-            addMeme = AddMeme(repository)
+            addMeme = AddMeme(repository),
+            getTagsByUri = GetTagsByUri(repository),
+            addTagsByUri = AddTagsByUri(repository),
+            deleteTagsByUri = DeleteTagsByUri(repository)
         )
     }
 
