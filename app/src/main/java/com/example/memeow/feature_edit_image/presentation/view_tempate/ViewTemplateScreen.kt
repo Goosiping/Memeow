@@ -4,6 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.AlarmClock.EXTRA_MESSAGE
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,11 +75,12 @@ fun EditViewTemplateScreen(
                     MemeTemplateItem(
                         imageUri = meme.image,
                         onImageClick = { viewModel.onEvent(ViewTemplateEvent.PreviewTemplate(meme)) },
-                        modifier = Modifier.padding(2.dp)
+                        modifier = Modifier.padding(2.dp),
+                        isSelected = (meme.image == state.selectedTemplate?.image)
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
             PreviewTemplateWindow(
                 modifier = Modifier.weight(2f, false),
@@ -107,6 +113,7 @@ fun LaunchEditPage(context:Context,uri: Uri){
     startActivity(context,intent,null)
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PreviewTemplateWindow(
     modifier: Modifier = Modifier,
@@ -127,24 +134,19 @@ fun PreviewTemplateWindow(
                 .padding(horizontal = 16.dp)
                 .padding(vertical = 16.dp)
         ) {
-            /*
-            Text(
-                text = "預覽模板",
-                textAlign = TextAlign.Center,
-                fontSize = MaterialTheme.typography.h6.fontSize,
-                modifier = Modifier.padding(top = 8.dp)
-            )*/
 
             if (imageUri != null) {
-                Image(
-                    painter = rememberAsyncImagePainter(model = imageUri),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit, //CROP?
-                    modifier = Modifier
-                        .clickable { /***GOTO EDIT**/ }
-                        .fillMaxWidth()
-                        .requiredHeight(200.dp)
-                )
+                Crossfade(targetState = imageUri, animationSpec = tween(500)){ imageUri ->
+                    Image(
+                        painter = rememberAsyncImagePainter(model = imageUri),
+                        contentDescription = null,
+                        contentScale = ContentScale.Fit, //CROP?
+                        modifier = Modifier
+                            .clickable { /***GOTO EDIT**/ }
+                            .fillMaxWidth()
+                            .requiredHeight(200.dp)
+                    )
+                }
             }else{
                 Column(
                     modifier = Modifier
@@ -167,9 +169,11 @@ fun PreviewTemplateWindow(
 
             }
 
+
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = 4.dp)
                 ,
                 onClick = {
                     selectOnClickMethod()
