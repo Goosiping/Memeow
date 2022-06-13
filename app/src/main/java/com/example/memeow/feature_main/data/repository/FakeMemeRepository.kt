@@ -92,7 +92,7 @@ class FakeMemeRepository (
             val Memestoadd = notindatasetList.map{
                 MemeEntity(
                     image = it,
-                    tags = listOf("null","not","handled"),
+                    tags = listOf("local"),
                     title = "notnull"
                 )
             }

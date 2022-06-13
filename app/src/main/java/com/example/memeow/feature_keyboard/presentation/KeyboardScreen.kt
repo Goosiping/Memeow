@@ -247,7 +247,7 @@ fun RandomButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_icon_dice),
             contentDescription = "Send a random meme",
-            tint = MaterialTheme.colors.onPrimary,
+            tint = MaterialTheme.colors.secondary,
             modifier = modifier.padding(3.dp)
         )
     }
