@@ -73,7 +73,13 @@ fun navigationBar(
                 if (imageId != null) {
                     singleViewBody(
                         imageUri =  Uri.parse(imageId.replace('\\', '/')),
-                        onClickBack = { navController.popBackStack() }
+                        onClickBack = { navController.popBackStack() },
+                        onClickEdit = {
+                            navigateToEditView(
+                                navController = navController,
+                                image = Uri.parse(imageId.replace('\\', '/'))
+                            )
+                        }
                     )
                 }
             }
