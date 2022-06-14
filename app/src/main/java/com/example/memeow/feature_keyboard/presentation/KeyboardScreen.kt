@@ -99,6 +99,9 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
                         .heightIn(min = 40.dp),
                     onClickMethod = {
                         viewModel.onEvent(KeyboardEvent.TouchSearchBar)
+                    },
+                    onKeywordChanged = {
+                        viewModel.updateKeyword(it)
                     }
                 )
                 RandomButton(
@@ -188,6 +191,7 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = MaterialTheme.typography.body1.fontSize,
     onClickMethod: () -> Unit,
+    onKeywordChanged : (String)->Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed: Boolean by interactionSource.collectIsPressedAsState()
@@ -201,6 +205,7 @@ fun SearchBar(
         modifier = modifier,
         value = textState,
         onValueChange = {
+
         },
         interactionSource = interactionSource,
         singleLine = true,

@@ -104,6 +104,10 @@ class KeyboardViewModel(
                 /*TODO*/
                 /** 1. Hide keyboard
                  *  2. Searching by keyword, and display result.*/
+
+
+                getMemes(state.value.searchTextFieldValue.text)
+                Log.i(TAG,"Return text, ${state.value.searchTextFieldValue.text}")
                 updateShowKeyboard(false)
             }
             is KeyboardEvent.CapsLock->{
@@ -112,6 +116,7 @@ class KeyboardViewModel(
             is KeyboardEvent.SendRandomMeme->{
                 postViewModelEvent(KeyboardSendMemeEvent(state.value.memes.random()))
             }
+
 
 
         }
@@ -161,7 +166,11 @@ class KeyboardViewModel(
             }
             .launchIn(viewModelScope)
     }
-
+    fun updateKeyword(newkeyword: String){
+        _state.value = state.value.copy(
+            keyword = newkeyword
+        )
+    }
 
     init {
         Log.i(TAG,"TRY TO INIT")
