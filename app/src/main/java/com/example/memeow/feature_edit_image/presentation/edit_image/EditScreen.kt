@@ -1,10 +1,15 @@
 package com.example.memeow.feature_edit_image.presentation.edit_image
 
+import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -15,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Backspace
@@ -36,21 +42,29 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.example.memeow.R
 import ja.burhanrashid52.photoeditor.PhotoEditorView
 import ja.burhanrashid52.photoeditor.TextStyleBuilder
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.OutputStream
+import kotlin.time.Duration.Companion.seconds
 
 
 @Composable
 fun EditScreen(
     viewModel: EditViewModel = hiltViewModel<EditViewModel>(),
     imageUri: Uri?,
-    backMethod : () -> Unit
+    backMethod: () -> Unit
 ) {
     val photoEditorView: PhotoEditorView = rememberPhotoEditorView(imageUri, viewModel)
     val focusRequester = FocusRequester()
-
 
 
     /**Selecting a image*/
@@ -58,21 +72,25 @@ fun EditScreen(
         mutableStateOf<Uri?>(null)
     }
     val context = LocalContext.current
-    val bitmap =  remember {
+    val bitmap = remember {
         mutableStateOf<Bitmap?>(null)
     }
 
-    val launcher = rememberLauncherForActivityResult(contract =
-    ActivityResultContracts.GetContent()) { uri: Uri? ->
+    val launcher = rememberLauncherForActivityResult(
+        contract =
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
         addUri = uri
         addUri.let {
             if (Build.VERSION.SDK_INT < 28) {
                 bitmap.value = MediaStore.Images
-                    .Media.getBitmap(context.contentResolver,it).copy(Bitmap.Config.ARGB_8888, false);
+                    .Media.getBitmap(context.contentResolver, it)
+                    .copy(Bitmap.Config.ARGB_8888, false);
             } else {
                 val source = ImageDecoder
-                    .createSource(context.contentResolver,it!!)
-                bitmap.value = ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, false);
+                    .createSource(context.contentResolver, it!!)
+                bitmap.value =
+                    ImageDecoder.decodeBitmap(source).copy(Bitmap.Config.ARGB_8888, false);
             }
         }
         viewModel.photoEditor.addImage(bitmap.value)
@@ -121,13 +139,19 @@ fun EditScreen(
 
         ) {
             Button(
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.primaryVariant,
+                    contentColor = Color.White
+                ),
                 onClick = { viewModel.onEvent(event = EditEvent.StopTyping) }, modifier = Modifier
                     .align(
                         Alignment.TopEnd
                     )
                     .padding(end = 16.dp)
+                    .padding(top = 16.dp)
             ) {
                 Text("Done")
+
             }
 
             Row(
@@ -159,16 +183,42 @@ fun EditScreen(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(top = 80.dp)
-        ,
+            .padding(top = 80.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
 
-    ) {
+        ) {
 
         PhotoEditorViewCompose(photoEditorView)
         //Spacer(modifier = Modifier.weight(1f, false))
+
+
         Spacer(modifier = Modifier.weight(1f))
+        val context = LocalContext.current
+        if (viewModel.state.value.isShowSaveSuccess) {
+            Snackbar(
+
+                action = {
+                    Button(
+                        onClick = {
+                            ShareImage(context, viewModel.mSaveImageUri)
+                        }, colors = ButtonDefaults.buttonColors(
+                            MaterialTheme.colors.primaryVariant,
+                            Color.White
+                        )
+                    ) {
+                        Text("分享")
+                    }
+                },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(text = "存檔完成！")
+                LaunchedEffect(Unit) {
+                    delay(5000)
+                    viewModel.updateShowingSaveSuccess(false)
+                }
+            }
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -183,7 +233,7 @@ fun EditScreen(
                 ),
             horizontalArrangement = Arrangement.SpaceBetween,
 
-        ) {
+            ) {
 
             Spacer(modifier = Modifier.width(6.dp))
             EditButton(
@@ -220,6 +270,7 @@ fun EditScreen(
         }
 
     }
+
 }
 
 
@@ -257,9 +308,9 @@ fun rememberPhotoEditorView(imageUri: Uri?, viewModel: EditViewModel): PhotoEdit
     return remember {
         val photoEditorView = PhotoEditorView(context).apply {
             // Sets up listeners for View -> Compose communication
-            if (imageUri == null){
+            if (imageUri == null) {
                 source.setImageResource(R.drawable.blank)
-            }else{
+            } else {
                 source.setImageURI(imageUri)
             }
             source.setImageURI(imageUri)
@@ -289,4 +340,16 @@ fun EditButton(@DrawableRes iconImg: Int, text: String, onClickMethod: () -> Uni
         }
     }
 
+}
+
+
+fun ShareImage(context: Context, saveImageUri: Uri?) {
+    val intent = Intent(Intent.ACTION_SEND)
+    intent.type = "image/*"
+    if (saveImageUri == null) {
+        return
+    }
+    intent.putExtra(Intent.EXTRA_STREAM, saveImageUri)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    context.startActivity(Intent.createChooser(intent, null))
 }

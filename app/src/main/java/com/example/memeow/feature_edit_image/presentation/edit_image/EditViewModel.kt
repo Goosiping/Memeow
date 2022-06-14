@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModel
 import com.example.memeow.R
@@ -90,18 +91,6 @@ class EditViewModel @Inject constructor(
     }
 
 
-    /**Just can reference this sample code*/
-    private fun shareImage() {
-        val intent = Intent(Intent.ACTION_SEND)
-        intent.type = "image/*"
-        val saveImageUri = mSaveImageUri
-        if (saveImageUri == null) {
-            return
-        }
-        //can lookup to that photoeditor github
-        //intent.putExtra(Intent.EXTRA_STREAM, buildFileProviderUri(saveImageUri))
-        //startActivity(Intent.createChooser(intent, getString(R.string.msg_share_image)))
-    }
 
 
     fun setPhotoEditor(photoEditorView: PhotoEditorView) {
@@ -125,9 +114,9 @@ class EditViewModel @Inject constructor(
                     override fun onBitmapReady(saveBitmap: Bitmap?) {
                         if (saveBitmap != null) {
                             saveImageToStorage(saveBitmap, fileName)
+
                         }
                     }
-
 
                     override fun onFailure(e: Exception?) {
                         Log.i(TAG,"FIALUE")
@@ -135,7 +124,6 @@ class EditViewModel @Inject constructor(
                 })
 
         } else {
-
             /****Save with old method****/
         }
     }
@@ -144,6 +132,7 @@ class EditViewModel @Inject constructor(
 
     @Throws(IOException::class)
     private fun saveImageToStorage(bitmapObject: Bitmap, fileName:String) {
+
         val imageOutStream: OutputStream
         val storagePath = getCurrentImageFolderPath()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -155,6 +144,7 @@ class EditViewModel @Inject constructor(
             //values.put(MediaStore.Images.Media.BUCKET_DISPLAY_NAME, SettingValues.ALBUM_NAME)
             val uri: Uri? =
                 contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            mSaveImageUri = uri
             imageOutStream = uri?.let { contentResolver.openOutputStream(it) }!!
         } else {
             val imagePath =
@@ -165,8 +155,10 @@ class EditViewModel @Inject constructor(
         }
         try {
             bitmapObject.compress(Bitmap.CompressFormat.JPEG, 100, imageOutStream)
+            updateShowingSaveSuccess(true)
         } finally {
             imageOutStream.close()
+
         }
     }
 
@@ -199,6 +191,12 @@ class EditViewModel @Inject constructor(
     fun updateCurText(text: String){
         _state.value = state.value.copy(
             curText = text
+        )
+    }
+
+    fun updateShowingSaveSuccess(status: Boolean){
+        _state.value = state.value.copy(
+            isShowSaveSuccess = status
         )
     }
 

@@ -48,10 +48,9 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
     val state = viewModel.state.value
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
-
+    val tags = viewModel.state.value.allTags.toList()
 
     val focusManager = LocalFocusManager.current
-
     val keysMatrix = arrayOf(
         arrayOf("q", "w", "e", "r", "t", "y", "u", "i", "o", "p"),
         arrayOf("a", "s", "d", "f", "g", "h", "j", "k", "l"),
@@ -59,10 +58,6 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
         arrayOf("global", "_", " ", "ENTER")
     )
 
-
-
-
-    val tags = viewModel.state.value.allTags.toList()
 
     Column(
         modifier = Modifier

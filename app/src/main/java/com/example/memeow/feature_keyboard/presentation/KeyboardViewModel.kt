@@ -51,6 +51,7 @@ class KeyboardViewModel(
     fun observeViewModelEvents(): LiveData<KeyboardViewModelEvent> = observableEvents
 
     private var getMemesJob: Job? = null
+    private var getTagsJob: Job? = null
 
     private fun postViewModelEvent(event: KeyboardViewModelEvent) {
         observableEvents.postValue(event)
@@ -151,11 +152,6 @@ class KeyboardViewModel(
 
     }
 
-    @Composable
-    fun sendMeme(){
-        val context = LocalContext.current
-    }
-
 
     private fun getMemes(keyword: String?){
         getMemesJob?.cancel()                 // cancel the subscription to the previous flow
@@ -176,8 +172,8 @@ class KeyboardViewModel(
     }
 
     fun updateAllTags(){
-        getMemesJob?.cancel()                 // cancel the subscription to the previous flow
-        getMemesJob = memeUseCases.getAllTags() // request the new flow
+        getTagsJob?.cancel()                 // cancel the subscription to the previous flow
+        getTagsJob = memeUseCases.getAllTags() // request the new flow
             .onEach {
                 _state.value = state.value.copy(
                     allTags = it as MutableSet<String>
@@ -208,6 +204,7 @@ class KeyboardViewModel(
         memeUseCases = AppModule.provideNoteUseCases(repository)
 
         getMemes(null)
+
         updateAllTags()
 
         //AppModule.provideNoteUseCases(AppModule.provideDictionaryApi())
