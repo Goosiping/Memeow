@@ -22,10 +22,6 @@
         android:theme="@style/Theme.Memeow"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-        <activity
-            android:name=".feature_edit_image.presentation.EditActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
 
         <service
             android:name=".feature_keyboard.MemeInputIME"

@@ -5,7 +5,6 @@ import android.app.AppOpsManager
 import android.content.ClipDescription
 import android.content.Context
 import android.inputmethodservice.InputMethodService
-import android.inputmethodservice.Keyboard
 import android.inputmethodservice.KeyboardView
 import android.net.Uri
 import android.os.Build
@@ -17,14 +16,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.AbstractComposeView
 import androidx.core.view.inputmethod.InputConnectionCompat
 import androidx.core.view.inputmethod.InputContentInfoCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Observer
 import com.example.memeow.feature_keyboard.presentation.*
 
-import com.example.memeow.feature_keyboard.presentation.util.KeyboardUtil
 import com.example.memeow.ui.theme.MemeowTheme
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlin.properties.Delegates
 
 

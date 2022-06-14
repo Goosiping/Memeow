@@ -9,8 +9,7 @@ import androidx.room.Room
 import com.example.memeow.R
 import com.example.memeow.feature_edit_image.presentation.domain.use_case.GetTemplates
 import com.example.memeow.feature_edit_image.presentation.domain.use_case.ViewTemplateUseCase
-import com.example.memeow.feature_keyboard.domain.use_case.KeyboardUseCases
-import com.example.memeow.feature_keyboard.domain.use_case.SendMeme
+
 import com.example.memeow.feature_main.data.data_source.local.MemeDatabase
 import com.example.memeow.feature_main.data.data_source.local.entity.Converters
 import com.example.memeow.feature_main.data.data_source.remote.MemeApi
@@ -81,16 +80,6 @@ object AppModule {
         )
     }
 
-
-    /*----Keyboard-------*/
-    /*UseCases*/
-    @Provides
-    @Singleton
-    fun provideKeyboardUseCases(): KeyboardUseCases {
-        return KeyboardUseCases(
-            sendMeme = SendMeme()
-        )
-    }
 
     /*Edit ViewTemplate
     * TODO what is this template repo?

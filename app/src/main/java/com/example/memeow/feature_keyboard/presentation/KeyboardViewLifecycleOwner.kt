@@ -1,4 +1,4 @@
-package com.example.memeow.feature_keyboard
+package com.example.memeow.feature_keyboard.presentation
 
 import android.view.View
 import androidx.lifecycle.*

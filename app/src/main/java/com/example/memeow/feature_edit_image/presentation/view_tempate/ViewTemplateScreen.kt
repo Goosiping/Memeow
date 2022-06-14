@@ -1,14 +1,9 @@
 package com.example.memeow.feature_edit_image.presentation.view_tempate
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
-import android.provider.AlarmClock.EXTRA_MESSAGE
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,13 +21,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.memeow.R
-import com.example.memeow.feature_edit_image.presentation.EditActivity
 import com.example.memeow.feature_edit_image.presentation.component.MemeTemplateItem
-import com.example.memeow.feature_main.domain.model.Meme
 import com.example.memeow.feature_main.presentation.explore.components.MainBar
 
 private const val TAG = "EditViewTemplateScreen"
@@ -105,13 +97,6 @@ fun EditViewTemplateScreen(
     }
 }
 
-
-fun LaunchEditPage(context:Context,uri: Uri){
-    val intent = Intent(context, EditActivity::class.java).apply {
-        putExtra(EXTRA_MESSAGE, uri)
-    }
-    startActivity(context,intent,null)
-}
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable

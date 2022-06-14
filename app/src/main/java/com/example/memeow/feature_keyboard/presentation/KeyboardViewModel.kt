@@ -3,31 +3,17 @@ package com.example.memeow.feature_keyboard.presentation
 import android.app.Application
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.*
 import com.example.memeow.di.AppModule
-import com.example.memeow.feature_keyboard.domain.use_case.KeyboardUseCases
-import com.example.memeow.feature_keyboard.domain.use_case.SendMeme
-import com.example.memeow.feature_main.data.data_source.remote.MemeApi
-import com.example.memeow.feature_main.data.repository.FakeMemeRepository
-import com.example.memeow.feature_main.domain.model.Meme
 import com.example.memeow.feature_main.domain.repository.MemeRepository
 import com.example.memeow.feature_main.domain.use_case.*
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
-import java.security.AccessController.getContext
-import javax.inject.Inject
-
 
 
 class KeyboardViewModel(
@@ -39,7 +25,6 @@ class KeyboardViewModel(
     t, it will be broken. SO i change into without @HiltVieModel and @Inject constuctor
     * so i move it to here
     * */
-    private lateinit var keyboardUseCases: KeyboardUseCases
     private lateinit var memeUseCases: MemeUseCases
     private lateinit var repository: MemeRepository
 
@@ -63,7 +48,6 @@ class KeyboardViewModel(
         when(event){
             is KeyboardEvent.ClickMeme ->{
                 viewModelScope.launch {
-                    keyboardUseCases.sendMeme(event.meme)
                     Log.i(TAG,"SEND MEME()")
                     postViewModelEvent(KeyboardSendMemeEvent(event.meme))
                 }
@@ -195,9 +179,6 @@ class KeyboardViewModel(
 
     init {
         Log.i(TAG,"TRY TO INIT")
-        keyboardUseCases = KeyboardUseCases(
-            sendMeme = SendMeme()
-        )
         val api = AppModule.provideDictionaryApi()
         val db = AppModule.provideMemeDatabase(application)
         val repository = AppModule.provideNoteRepository(context, db,api)
