@@ -8,6 +8,8 @@ data class KeyboardState (
     val keyword:String = "", // for in-keyboard search bar's keyword
     val showTextKeyboard: Boolean = false,
     val searchTextFieldValue: TextFieldValue = TextFieldValue(),
-    val isCapsLock:Boolean = false //Display upper case or lower case keyboard
+    val isCapsLock:Boolean = false, //Display upper case or lower case keyboard
+    val selectingTag:String = "",
+    val allTags : MutableSet<String> = mutableSetOf()
 
 )

@@ -122,6 +122,7 @@ class KeyboardViewModel(
         }
     }
 
+
     private fun updateSearchTextFieldState(newText: String, newSelection: TextRange){
         _state.value =  state.value.copy(
             searchTextFieldValue = state.value.searchTextFieldValue.copy(
@@ -166,10 +167,34 @@ class KeyboardViewModel(
             }
             .launchIn(viewModelScope)
     }
+
+
     fun updateKeyword(newkeyword: String){
         _state.value = state.value.copy(
             keyword = newkeyword
         )
+    }
+
+    fun updateAllTags(){
+        getMemesJob?.cancel()                 // cancel the subscription to the previous flow
+        getMemesJob = memeUseCases.getAllTags() // request the new flow
+            .onEach {
+                _state.value = state.value.copy(
+                    allTags = it as MutableSet<String>
+                )
+            }
+            .launchIn(viewModelScope)
+
+    }
+
+
+    fun updateSelectingTag(tag: String) {
+        _state.value = state.value.copy(
+            selectingTag = tag
+        )
+        updateKeyword(tag)
+        getMemes(tag)
+        updateSearchTextFieldState(tag, TextRange(tag.length))
     }
 
     init {
@@ -183,6 +208,8 @@ class KeyboardViewModel(
         memeUseCases = AppModule.provideNoteUseCases(repository)
 
         getMemes(null)
+        updateAllTags()
+
         //AppModule.provideNoteUseCases(AppModule.provideDictionaryApi())
 
     }

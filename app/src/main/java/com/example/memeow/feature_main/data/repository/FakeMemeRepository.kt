@@ -15,6 +15,8 @@ import com.example.memeow.feature_main.domain.model.Meme
 import com.example.memeow.feature_main.domain.repository.MemeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 class FakeMemeRepository (
@@ -143,6 +145,27 @@ class FakeMemeRepository (
         val newtags = (oldtags subtract tags.toSet()).toList()
         dao.update(newtags,uriString)
     }
+
+    override fun getAllTags(): Flow<Set<String>> {
+        return flow{
+            Log.i("AllTags","hi")
+            val daomemes = dao.getMeme().map { it.toMeme() }
+            val allMemes = daomemes.map { it }
+            val tagResult = mutableSetOf<String>()
+            for(meme in allMemes){
+                if (meme.image.toString().startsWith("http")){
+                    continue
+                }
+                Log.i("AllTags",meme.tags.toString())
+
+                for(tag in meme.tags){
+                    tagResult.add(tag)
+                }
+            }
+            emit(tagResult)
+        }
+    }
+
 }
 
 

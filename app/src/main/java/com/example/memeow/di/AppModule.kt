@@ -76,7 +76,8 @@ object AppModule {
             addMeme = AddMeme(repository),
             getTagsByUri = GetTagsByUri(repository),
             addTagsByUri = AddTagsByUri(repository),
-            deleteTagsByUri = DeleteTagsByUri(repository)
+            deleteTagsByUri = DeleteTagsByUri(repository),
+            getAllTags = GetAllTags(repository)
         )
     }
 

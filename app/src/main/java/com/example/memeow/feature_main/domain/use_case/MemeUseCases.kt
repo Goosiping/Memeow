@@ -8,4 +8,5 @@ data class MemeUseCases(
     val getTagsByUri: GetTagsByUri,
     val addTagsByUri: AddTagsByUri,
     val deleteTagsByUri: DeleteTagsByUri,
+    val getAllTags: GetAllTags,
 )

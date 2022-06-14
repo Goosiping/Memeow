@@ -1,8 +1,6 @@
 package com.example.memeow.feature_keyboard.presentation
 
 import android.net.Uri
-import android.util.Log
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +21,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.painter.Painter
@@ -41,7 +38,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.memeow.R
 import com.example.memeow.feature_keyboard.presentation.util.KeyboardUtil
-import com.example.memeow.feature_main.domain.model.Meme
 
 
 @Composable
@@ -66,9 +62,7 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
 
 
 
-    val tags = mutableListOf<String>(
-        "柴犬", "哭哭貓", "海綿寶寶"
-    )
+    val tags = viewModel.state.value.allTags.toList()
 
     Column(
         modifier = Modifier
@@ -177,7 +171,10 @@ fun KeyboardScreen(viewModel: KeyboardViewModel = hiltViewModel()) {
         }
         KeyboardBottomBar(
             modifier = Modifier.heightIn(55.dp,60.dp).requiredHeight(55.dp)
-            ,tags = tags)
+            ,tags = tags,
+            checkSelectTagValue = viewModel.state.value.selectingTag,
+            tagClickMethod = {viewModel.updateSelectingTag(it)}
+        )
 
     }
 
@@ -294,7 +291,9 @@ fun KeyboardMemeCard(
 @Composable
 fun KeyboardBottomBar(
     modifier: Modifier = Modifier,
-    tags: List<String>
+    tags: List<String>,
+    checkSelectTagValue: String,
+    tagClickMethod: (String)->Unit
 ) {
     Surface(
         modifier = modifier
@@ -324,8 +323,9 @@ fun KeyboardBottomBar(
                         mutableStateOf(false)
                     }
 
-                    KeyboardChip(isSelected = textChipRememberOneState.value, text = item,
-                        onChecked = { textChipRememberOneState.value = it })
+                    KeyboardChip(isSelected = (checkSelectTagValue == item && !textChipRememberOneState.value), text = item,
+                    clickMethod = { tagClickMethod(it)}
+                    )
                 }
             }
         }
@@ -339,7 +339,7 @@ fun KeyboardBottomBar(
 fun KeyboardChip(
     isSelected: Boolean,
     text: String,
-    onChecked: (Boolean) -> Unit,
+    clickMethod: (String)->Unit
 ) {
     val shape = RoundedCornerShape(6.dp)
     Box(contentAlignment = Alignment.Center) {
@@ -351,14 +351,18 @@ fun KeyboardChip(
                     vertical = 1.dp,
                     horizontal = 4.dp
                 )
+                .clip(shape = shape)
+                .clickable {
+                    if(isSelected){
+                        clickMethod("")
+                    }else{
+                        clickMethod(text)
+                    }
+                }
                 .background(
                     color = if (isSelected) MaterialTheme.colors.onPrimary else MaterialTheme.colors.secondaryVariant,
                     shape = shape
                 )
-                .clip(shape = shape)
-                .clickable {
-                    onChecked(!isSelected)
-                }
                 .padding(8.dp)
         ) {
             Text(

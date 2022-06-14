@@ -19,4 +19,6 @@ interface MemeRepository {
     suspend fun insertTagsByUri(tags: List<String>, uri: Uri)
 
     suspend fun removeTagsByUri(tags: List<String>, uri: Uri)
+
+    fun getAllTags(): Flow<Set<String>>
 }
